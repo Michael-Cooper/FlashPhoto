@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+	<meta charset = "utf-8">
+	<title> Converting and Segmenting a CT Scan Using Mia </title>
+	<link class = "page" rel="stylesheet" type="text/css" href="stylesheet.css">
+
+</head>
+<body>
+
+
+	<div class="content">
+		<nav>
+			<a href="../index.html" class = "page"> Home </a> |
+			<a href="../usersupport.html" class = "page"> User Support </a> |
+			<a href="../developersupport.html" class = "page"> Developer Support</a> |
+		  <a href="../../Documentation/doxygen-html/index.html" class = "page"> Documentation using Doxygen </a>
+		</nav>
+	</div>
+
+	<div class = "content">
+		<h1>Converting and Segmenting a CT Scan Using Mia</h1>
+		<p>
+		The feature that sets Mia apart from other image-editing software is its ability
+		to apply adjustments to an entire stack of images easily, such as a stack of CT
+		scan images with a single command in command line mode. It may be helpful to play
+		around with graphics mode to decide your desired settings before filtering and saving
+		hundreds of images in your system. <br><br>
+		Once you know your desired settings, however, you will
+		find command line mode to be extremely quick and easy to use. In this tutorial,
+		I will walk through the process of converting and editing a stack of CT images in command line mode.<br><br>
+
+		To process a stack of numbered image files with the command line, use the following command: <br><br>
+		./Mia ct_scan_result###.png -blur 5 -quantize 4 ct_scan_processed###.jpg <br><br>
+		The first argument,
+		ct_scan_result###.png,
+		is the name of the input files, but with the identifying number replaced
+		with a###.png <br><br>
+		This set of files has a 3-digit identifying number, but if, for example, your batch
+		of files has a 5-digit identifying number, use five #'s instead. The next arguments are the filters
+		we want to apply to the images. -blur represents the Blur filter, and itâs followed by the amount of blur we want. <br><br>
+		Applying a blur filter reduces the noise in the image. -quantize represents the Quantize filter, and we specified 4
+		for 4 segments, which will show the different regions of tissue more clearly. There are seven different filters
+		in total that can be applied to each image using the following arguments. If the filter requires an input,
+		like Blur and Quantize do, the input number must follow the filter name: <br><br>
+		Sharpen filter: <br>
+		-sharpen <br><br>
+		Edge Detect filter:<br>
+		-edgedetect<br><br>
+		Threshold filter:<br>
+		-thresh<br><br>
+		Quantize filter:<br>
+		-quantize <br><br>
+		Blur filter:<br>
+		-blur<br><br>
+		Saturate filter:<br>
+		-saturate<br><br>
+		Multiply RGB filter:<br>
+		-multrgb<br>
+		[note: this filter requires 3 inputs, for the red value, the blue value, and the green value respectively] <br><br>
+		The last argument is the output file name, again with the #âs at the end representing the identifying number.
+		Notice that we can convert to .png to .jpg file extension, if we want.
+		After running this command, there should be a new filtered image saved as the output file name for each of the numbered files
+		 that match the pattern. <br><br>
+
+		 Hours of work, done in two seconds!
+		</p>
+
+
+	</div>
+
+	<div class = "footer">
+		<!-- You can change the copyright! -->
+		<span class="copyright">&copy; 2016, CSCI 3081 Cheng Chen/ Kaitiyn Christensen/ Michael Cooper/ Simin Sun</span>
+	</div>
+
+
+</body>
+</html>

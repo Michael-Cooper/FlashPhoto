@@ -1,0 +1,137 @@
+<html>
+	<head>
+		<title>
+			Simin Sun's Blog
+		</title>
+		<style>
+			p.ex1 {
+                   font: italic bold 42px/50px Georgia, serif;
+                   color : white;
+    			   background-color: rgba(0, 0, 255, 0.3);
+			}
+			p.ex2 {
+    			  font: 16px Georgia, sans-serif;
+            }
+            p.ex3 {
+    			font: 18px Georgia, sans-serif;
+    			color : white  ;
+    			background-color: pink;
+			}
+		</style>	
+	</head>	
+	
+	<body>
+		<div>
+			<p class="ex2">
+				CSCi 3081W </br>
+				2016 Spring </br>
+				BrushWork Project </br>
+			</p class = "ex2">
+				<a href="../programblog.html" class = "page"> Go back </a> 
+
+			<p class="ex1">
+				Simin Sun's Blog 
+			</p class="ex1">	
+			<ul>
+				<li >ID : 5089150</li>
+				<li>Email: sunx0367@umn.edu</li>
+			</ul>
+		</div>
+		
+		<div>
+			<h2>BrushWork Iteration 1 </h2>	
+		</div>
+
+		<div>
+			<p>28,Feb,2016</p>
+
+	<a href="../programblog.html" class = "page"> Go back</a> 
+
+					<p class="ex3"> About Tool class </p class="ex3">
+					<p>
+					 &#9;During the first group meeting, all the group members show their own UML designs and we immediately agree that we need a class called tool and every specific tool is iherented from the tool class. However, we then have two problem: Should eraser also inherited from the tool class? We all agree that it should, but as we work on this project, we find that it is better treat it slightly different from other tools. The reason will explain in Eraser part below.</br>
+
+
+					 The second problem is: should the tool class define the how the mask look like or should each specific tool class include their own mask definations? According the hints from the project handout, I found that most specific tools have their own masks, therefore, I suggested that we should put the mask in each individual class.
+					</p>
+
+					<p class="ex3">What I have done?</p class="ex3">
+					<p>
+					 &#9;Tool class is finished by Micheal, and I personally finished the Highlighter and Eraser part. Beside this, I also change the coding style by using one apply function in the tool class instead of putting them in the sepearte class. When we put the apply function in seperate class, we actully hard code every varaible while most apply functions actully have similiar format. The only different is the color, however, they all equal to current. Therefore, to make it a better style, I think it is necessary to include the apply function in the tool.cpp file instead every specfic tool files. So I include the following code in the Tool.cpp file and we only need to declare the value of maskWidth,maskHeight and etc. in each specific tool. 
+					</p>
+
+<xmp>
+	void Tool::Apply(int x, int y, int m_height, PixelBuffer* m_displayBuffer, ColorData color)
+	{
+	  x = x - centerX;
+	  y = y + centerY;
+	  float trans;
+		for (int i = 0; i < maskHeight; i++)
+		{
+			for (int j = 0; j < maskWidth; j++)
+			{
+				ColorData curColor = m_displayBuffer->getPixel(x + j, m_height - y + i);
+				if (mask[i][j] < 1 && mask[i][j] > 0){
+					trans = curColor.getLuminance() * mask[i][j];
+				}
+				m_displayBuffer->setPixel(x + j, m_height - y + i, color * trans + curColor * (1 - trans));
+			}
+		}
+	}
+</xmp>
+					<p class="ex3">Highlighter</p class="ex3">
+					<p>
+					 &#9;The Highlighter actually has similiar mask as Calligraphy, the only differences is the color you pass into the Apply function is not the current color, it should be 40% of current color and 60% whatever color is already on the canvas. Also we need pay attention to the luminance value,in that case, the highlighter will show as transparent color. This part is taken care in tool.cpp. Therefore, I give 0.4 to each pixel that should have color instead of 1, code is shown below: 
+					</p> 
+<xmp>
+  mask = new float* [maskHeight];
+  for (int i = 0; i < maskHeight; i++) {
+  	mask[i]= new float[maskWidth];
+  	for (int j = 0; j < maskWidth; j++) {
+  		mask[i][j] = 0.4;
+  	}
+  }
+</xmp>
+					
+					<p class="ex3">Eraser</p class="ex3">
+					<p>
+					 &#9;The Eraser is supposed to use the color of background instead of just the white color. Therefore it not satisfies the equation: color*mask + canvas*(1-mask). Instead of calling the getPixel(), we actually need to call getBackgroundColor(). This makes me feel that Eraser should overwrite the apply function in the tool.cpp and has its own apply function.  </br>
+					 The second challenges of this part is the shape of the pen is supposed to be a circle. Therefore I create 2D Array and use for loop to make every spot within the circle as "1", the others remains "0", the main idea is the equation to distance of two points.</br>
+					</p> 
+<xmp>
+	for (int k = 0; k < maskHeight; k++) {
+		for (int b = 0; b < maskWidth; b++) {
+			if (((pow(k-centerX, 2)) + (pow(b-centerY, 2))) <= (pow(centerX, 2))) {
+			  mask[k][b] = 1;
+			}
+		}
+	}
+</xmp>
+				<p>
+				Therefore, when we erase the spot, we can use while loop to distiguish if it is with the circle or outside the circle. Then we can remove only the pixel inside the circle. The apply function is mostly like the others, the most significant difference is the color passed in. Code is shown below: 
+				</p>
+<xmp>
+	void Eraser::Apply(int x, int y, int m_height, PixelBuffer* m_displayBuffer, ColorData color)
+	{
+		x = x - maskWidth/2;
+		y = y + maskHeight/2;
+
+		for (int i = 0; i < maskHeight; i++)
+		{
+			for (int j = 0; j < maskWidth; j++)
+			{
+				ColorData curColor = m_displayBuffer -> getBackgroundColor();
+				if (mask[i][j] == 1){m_displayBuffer->setPixel(x + j, m_height - y + i, curColor);}
+			}
+		}
+	}
+</xmp>
+				<p class="ex3">My feeling after Iteration 1</p class="ex3">
+				<p>
+					 &#9; The iteration 1 is my first C++ programming project, it is cool though. The biggest problem is that we actually made the program run at very beginning. However, since all of us are not familiar with C++, we changed it several times. The coding style is hardest part for us. I guess we need to think in C++ in a deeper way.
+				</p>
+		</div>
+		<a href="../programblog.html" class = "page"> Go back to Program Blog Page</a> 
+
+	</body>
+</html>

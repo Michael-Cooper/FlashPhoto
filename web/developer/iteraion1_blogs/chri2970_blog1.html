@@ -1,0 +1,31 @@
+<html>
+	<a href="../programblog.html" class = "page"> Go back</a> 
+
+<p>This iteration, I did mostly modification and refactoring of features that my team members had implemented. The sample below is a snippet from the Spray class that I refactored. I also performed the same modifications on all of the other tool classes.</p>
+
+<p>One of the main issues that the code had when I first saw it was that the mask for each tool was a uniquely-named global variable (mask1, mask2, etc). I didn't think this made proper use of the object-oriented principle of encapsulation, so I made each mask a local private variable named "mask".</p>
+
+<p>One of the problems my team members had run into while implementing the brushes was a C++ syntax issue where they were trying to initialize the array to all zeros or ones with {{0}} or {{1}} respectively, and if the variable had to be declared in the header file already, they couldn't use that type of shortcut syntax anymore. I added a loop to initialize all of the variables in the standard way.</p>
+
+<p>Another thing that I added were some comments to make sure that the code was self-documenting. In the snippet below, there is one comment that I added to clarify the purpose of the loop, since it wasn't necessarily plain upon first glance.</p>
+
+<p>Another element that I added was the declaration of variables like maskHeight and maskWidth, since initially their values were hard-coded into the logic below. The reason I did this was to make changing these values in the future easier and less prone to mistakes (i.e., forgetting to change just one value), and to allow for future potential features such as variable-size masks.</p>
+
+  maskHeight = 41;
+  maskWidth = 41;
+  centerX = 21;
+  centerY = 21;
+  influence = .2;
+
+	// initialize array with zeros
+	mask = new float* [maskHeight];
+	for (int i = 0; i < maskHeight; i++) {
+		mask[i]= new float[maskWidth];
+		for (int j = 0; j < maskWidth; j++) {
+			mask[i][j] = 0;
+		}
+	}
+	<br>
+	<a href="../programblog.html" class = "page"> Go back to Program Blog Page</a> 
+
+</html>
