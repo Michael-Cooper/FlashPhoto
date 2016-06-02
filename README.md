@@ -1,0 +1,2 @@
+# FlashPhoto
+Written in C++
