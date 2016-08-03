@@ -1,0 +1,159 @@
+<html>
+	<head>
+		<title>
+			Michael Cooper's Blog
+		</title>
+		<style>
+			p.ex1 {
+                   font: italic bold 42px/50px Georgia, serif;
+                   color : white;
+    			   background-color: rgba(100, 170, 100, 1);
+			}
+			p.ex2 {
+    			  font: 16px Georgia, sans-serif;
+            }
+            p.ex3 {
+    			font: 18px Georgia, sans-serif;
+    			color : white  ;
+    			background-color: green;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div>
+			<p class="ex2">
+				CSCi 3081W </br>
+				Spring 2016 </br>
+				FlashPhoto Project </br>
+			</p class = "ex2">
+			<a href="../programblog.html" class = "page"> Go back </a>
+			<p class="ex1">
+				Michael Cooper's Blog
+			</p class="ex1">
+						<ul>
+				<li >ID : 2998234</li>
+				<li>Email: coop0244@umn.edu</li>
+			</ul>
+		</div>
+
+		<div>
+			<h2>FlashPhoto Iteration 3 </h2>
+		</div>
+
+		<div>
+			<p>April 11th, 2016</p>
+			<a href="../programblog.html" class = "page"> Go back </a>
+		
+
+					<p class="ex3">What have I done?</p class="ex3">
+					<p>
+					 &#9;I, along with Simin, was assigned the refactoring of the two applications use a libphoto library.  I also helped 
+					</p>
+
+
+					<p class="ex3">Convolution Filters</p class="ex3">
+					<p>
+					 &#9;Kaitlyn and I ended up inhereting all of our filter classes from a generic Filter superclass.  This design choice allows us to handle all filters together (for things such as lists) within the main FlashPhoto app.  Since we did start this iteration on top of the TA's solution, and they already had individual methods laid out for each filter, we ended up simply calling the appropriate filter directly for each method.
+					 
+					 The Filter.h file held a float ** mask attribute which allowed my convolution filters to use that to hold their kernels.  For a couple of my filters, I needed to adjust the size of that kernel according to a slider value from the GUI.  For the Motion Blur, in particular, this was doubly challenging, as I also had to adjust given the direction input.  Here's a code snippet of the createKernel function that took care of that:
+					</p>
+<xmp>
+void FMotionBlur::createKernel()
+{
+  if (int(strength) % 2 == 0)
+    strength += 1;
+  maskHeight = (int) strength;
+  maskWidth = (int) strength;
+
+
+
+  mask = new float* [maskHeight];
+  for (int i = 0; i < maskHeight; i++) {
+    mask[i]= new float[maskWidth];
+  }
+
+
+  if (direction == 0)
+  {
+    for (int i = 0; i < maskHeight; i++)
+    {
+      mask[i][maskHeight/2] = 1 / floor(strength);
+    }
+  }
+
+
+  else if (direction == 1)
+  {
+    for (int i = 0; i < maskWidth; i++)
+    {
+      mask[maskWidth/2][i] = 1 / floor(strength);
+    }
+  }
+
+
+
+  else if (direction == 2)
+  {
+    for (int i = 0; i < maskWidth; i++)
+    {
+      mask[maskWidth - 1 - i][i] = 1 / floor(strength);
+    }
+  }
+
+
+  else if (direction == 3)
+  {
+    for (int i = 0; i < maskWidth; i++)
+    {
+      mask[i][i] = 1 / floor(strength);
+    }
+  }
+
+
+}
+</xmp>
+
+					<p>
+					 &#9;I used if statements to determine which direction was selected.  This is one of the areas I would have liked to handle a little more gracefully if I had a little more time to work on the project.
+					</p>
+
+
+					<p class="ex3">Blur Tool</p class="ex3">
+					<p>
+					 &#9;The Blur tool presented its own unique challenge, which took me a thoughtful few hours to complete.  While the convolution filters came across the problem of requiring a temporary pixel buffer to write to while reading from the main pixelbuffer, and then swapping the temp buffer onto the main buffer when finished, there was an added layer of complexity to deal with regarding the Blur tool; namely, detecting when to start and stop in order to then swap the temp buffer back onto the main buffer.  With the filters, this wasn't an issue, as you just ran a big nested for loop over every pixel of the canvas.  But with the Blur tool, you have to start when the mouse is clicked, then keep going until the mouse is let up.  My design ended up utilizing a helper function to achieve this:</br>
+					</p>
+<xmp>
+void TBlur::swap()
+{
+
+  m_buffer->copyPixelBuffer(m_tempBuffer, m_buffer);
+  delete m_tempBuffer;
+}
+</xmp>
+				<p>
+				And this was called when the left mouse button released was detected:
+				</p>
+<xmp>
+void FlashPhotoApp::leftMouseUp(int x, int y)
+{
+	...
+    m_tools[m_curTool]->swap();
+
+	...
+}
+</xmp>
+
+				<p>
+				It was also a little challenging implementing a new tool with the TA's solution.  Having done our iteration 1, it would have been a lot easier to implement a new tool, knowing the code for all the tools pretty intimately from the first phase.  The TA's solution was more separated out, design-wise, for implementing tools.  They had a factory to help make tools, for instance.  So it took a little while, and some careful reading of all the necessary code, to implement a new tool with the TA's solution.
+				</p>
+
+				<p class="ex3">My feeling after Iteration 2</p class="ex3">
+				<p>
+					 &#9; Iteration 2 was a bit of a rollercoaster.  When we initially went over all the new implementations in class, it seemed like a lot was being added.  After we met as a group and discussed how to split up the work, things seemed more doable.  And then when I began doing the actual work, I ran into complications implementing certain things that I hadn't forseen.  The finished product was pretty fun to see come to life though, it was pretty fun and impressive seeing how much we could actually do with the program once it was finished.  It's a more powerful program than I expected it to be at the beginning of class.
+				</p>
+		</div>
+		<a href="../programblog.html" class = "page"> Go back to Program Blog Page</a>
+	</body>
+
+</html>

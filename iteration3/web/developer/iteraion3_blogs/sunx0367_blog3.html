@@ -1,0 +1,165 @@
+<html>
+	<head>
+		<title>
+			Simin Sun's Blog
+		</title>
+		<style>
+			p.ex1 {
+                   font: italic bold 42px/50px Georgia, serif;
+                   color : white;
+    			   background-color: rgba(0, 0, 255, 0.3);
+			}
+			p.ex2 {
+    			  font: 16px Georgia, sans-serif;
+            }
+            p.ex3 {
+    			font: 18px Georgia, sans-serif;
+    			color : white  ;
+    			background-color: pink;
+			}
+		</style>	
+	</head>	
+	
+	<body>
+		<div>
+			<p class="ex2">
+				CSCi 3081W </br>
+				2016 Spring </br>
+			</p class = "ex2">
+			
+			<a href="../programblog.html" class = "page"> Go back </a>
+			<p class="ex1">
+				Simin Sun's Blog 
+			</p class="ex1">	
+			<ul>
+				<li >ID : 5089150</li>
+				<li>Email: sunx0367@umn.edu</li>
+			</ul>
+		</div>
+		
+		<div>
+			<h2>Iteration 3: Final Release</h2>	
+		</div>
+
+		<div>
+			<p>6,May,2016</p>
+					<a href="../programblog.html" class = "page"> Go back </a> 
+					<p class="ex3">What I have done?</p class="ex3">
+					<p>
+					As my job is creating the libphoto libray and FlashPhoto, therefore the most important thing is to set up the MAKEFILE for the program. We have four libraries, libphoto, Glui, JPEG and PNG. Each of them need to be inluded in the main MAKEFILE and can be compiled and cleared by calling certain command from the root directory. I also need to create the new MAKEFILE for the libphoto, FlashPhoto and Mia under their directory.  In this case, I also did part of the Mia to make everything compile. </br>
+
+					The other thing I did is to create the website. According to the tutorial, we have two parts that need to be done for this iteration. One is for the users and the other is for the developers. We also want to use the doxygen to generate the ducumentation for all classes we wrote under the developer page.
+					</p>
+
+					<p class="ex3"> About Makefile </p class="ex3">
+					<p>
+					To make it possible to run everything from the root directory, we have to write a main MAKEFILE to compile every library, FlashPhoto and Mia. We have to pay more attention to the order to compile all the files. We want to finish compile all the GLUI_LIB, PNG_LIB, JPEG_LIB before we compile the object files. 
+					Other setups were easy by following the instructions. </br>
+					</p>
+
+
+<xmp>
+# You will be able to compile every thing by call make all	
+all: $(GLUI_LIB) $(JPEG_LIB) $(PNG_LIB) $(PHOTO_LIB)
+	(cd libphoto; make)
+	(cd FlashPhoto; make)
+	(cd Mia; make)
+	(cd tests; make)
+	doxygen Doxyfile
+
+# Create the object_files directory only if it does not exist.
+setup: | $(OBJECT_DIR)
+
+$(OBJECT_DIR):
+	mkdir -p $(OBJECT_DIR)
+
+$(FlASHPHOTO): $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
+	$(MAKE) -C $(FLASHPHOTO_PATH)
+
+$(MIA): $(GLUI_LIB) $(PNG_LIB) $(JPEG_LIB) $(LIBPHOTO_LIB)
+	$(MAKE) -C $(MIA_PATH)
+</xmp>
+					<p class="ex3">libphoto Library</p class="ex3">
+					<p>
+					 &#9;The libphoto library should include most of the code from the iteration 2 except for the FlashPhoto.cpp,FlashPhoto.h and main.cpp. When make all is run in the libphoto directory, a library called libphoto.a will be built. 
+					</p> 
+<xmp>
+# create a library instead of a program
+OBJECT_DIR = build
+SOURCE_DIR = src
+EXECUTABLE = libphoto.a
+
+</xmp>
+					
+					<p class="ex3">FlashPhoto</p class="ex3">
+					<p>
+					 &#9;FlashPhoto should include the FlashPhoto.cpp, FlashPhoto.h and the main.cpp. It is the same application we have for iteration 2 but compile in different way. It can be compiled when you run the makefile inside the FlashPhoto directory. To be able to do this, we need to include a makefile in this directory.  There are some difference between the makefiles for libphoto and FlashPhoto are shown below: 
+
+					</p> 
+<xmp>
+OBJECT_DIR = object_files
+SOURCE_DIR = src
+
+#include all information for FlashPhoto, named photo in our case
+PHOTO = photo
+PHOTO_PATH = ../libphoto
+PHOTO_LIB = $(PHOTO_PATH)/lib$(PHOTO).a
+INCLUDE += -I$(PHOTO_PATH)/src
+LINK_LIBS +=  -L$(PHOTO_PATH)/ -l$(PHOTO)
+
+# Explicitly defined build targets because of dependancy on other header files
+$(OBJECT_DIR)/FlashPhoto.o: $(SOURCE_DIR)/FlashPhoto.cpp $(SOURCE_DIR)/FlashPhoto.h
+	$(CC) $(CFLAGS) $(INCLUDE)  -o $@ $<
+
+</xmp>
+				<p class="ex3">Mia</p class="ex3">
+				<p>
+					 &#9;To create the new mia application, we basiclly do the same things like FlashPhoto. There are two modes for the mia applications. I handled the part that come without specifying any command-line. It is similar with the FlashPhoto but smaller than it. For the graphical mode, a rubber stamp stamp is hardcoded to stamp the red arrow. We will be able to load a stack of images and you can choose next and previous images by clicking the buttom. 
+				</p> 
+<xmp>
+# one example filter 
+# same as the code from solution
+void MIAApp::applyFilterThreshold()
+{
+    Filter * f = FilterFactory::getFilter(FilterFactory::FILTER_THRESHOLD, 1, m_filterParameters.threshold_amount);
+    FilterFactory::applyFilter(f, m_displayBuffer);
+    delete f;
+}
+
+# display the new pixelbuffer and enable the redo and undo if necessary
+
+void MIAApp::commitState()
+{
+    PixelBuffer * newState = new PixelBuffer(m_displayBuffer->getWidth(),m_displayBuffer->getHeight(),m_displayBuffer->getBackground());
+
+    PixelBuffer::copyPixelBuffer(m_displayBuffer, newState);
+
+    m_historyStates.push_back(m_displayBuffer);
+
+    m_displayBuffer = newState;
+
+    while (!m_redoStates.empty()) {
+        delete m_redoStates.top();
+        m_redoStates.pop();
+    }
+
+    redoEnabled(!m_redoStates.empty());
+    undoEnabled(!m_historyStates.empty());
+}
+</xmp>
+
+<p class="ex3"> Coding style </p class="ex3">
+					<p>
+					As I am new to C++, my coding style changed a lot when I code. I wrapped them up after I finish them. </br>
+					1. variable name: I mostly using the similar name as the given code. For example: m_tools. Most of them are similar with the solution code. 
+					2. class name: most class I created have direct names that show their functions. For example: commitState will get the newest buffer and commit it. </br>
+					3. I commented most important functions in the class. To be able to recognized by the doxygen, I use /** .....*/ for multiple lines and //! for single lines.  There are also some testing codes in the comment I used when I coded. </br>
+				    </p>
+				<p class="ex3">My feeling after Iteration 3</p class="ex3">
+				<p>
+					 &#9; The iteration 3 focus more on making our program a solid base for users and developers using varity of technical features. The developers will be able to add new features to our applications and test if the functions works fine. It is more boring compared to last two iterations, but I learn lots of new technic during the process. 
+				</p>
+		</div>
+	<a href="../programblog.html" class = "page"> Go back to Program Blog Page</a> 
+	</body>
+</html>

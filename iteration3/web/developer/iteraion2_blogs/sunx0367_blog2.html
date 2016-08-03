@@ -1,0 +1,167 @@
+<html>
+	<head>
+		<title>
+			Simin Sun's Blog
+		</title>
+		<style>
+			p.ex1 {
+                   font: italic bold 42px/50px Georgia, serif;
+                   color : white;
+    			   background-color: rgba(0, 0, 255, 0.3);
+			}
+			p.ex2 {
+    			  font: 16px Georgia, sans-serif;
+            }
+            p.ex3 {
+    			font: 18px Georgia, sans-serif;
+    			color : white  ;
+    			background-color: pink;
+			}
+		</style>	
+	</head>	
+	
+	<body>
+		<div>
+			<p class="ex2">
+				CSCi 3081W </br>
+				2016 Spring </br>
+				BrushWork Project </br>
+			</p class = "ex2">
+			<a href="../programblog.html" class = "page"> Go back </a>
+			<p class="ex1">
+				Simin Sun's Blog 
+			</p class="ex1">	
+			<ul>
+				<li >ID : 5089150</li>
+				<li>Email: sunx0367@umn.edu</li>
+			</ul>
+		</div>
+		
+		<div>
+			<h2>Iteration 2: FlashPhotoApp</h2>	
+		</div>
+
+		<div>
+			<p>11,April,2016</p>
+			<a href="../programblog.html" class = "page"> Go back </a>
+					<p class="ex3"> Coding style </p class="ex3">
+					<p>
+					As I am new to C++, my coding style changed a lot when I code. I wrapped them up after I finish them. </br>
+					1. variable name: I mostly using the similar name as the given code. For example: m_displayerBuffer and m_buffer. Other will mostly indicate the direct meaning of the varables. For example,originX and originY. </br>
+					2. class name: most class I created have direct names that show their functions. For example: JpegHandler will read/write the JPEG image files while PngHandler will deal with PNG files. read_JPEG_file shows the file type is JPEG and is for reading only. </br>
+					3. I commented most important functions in the class. In /* .....*/ for multiple lines and // for single lines.  There are also some testing codes in the comment I used when I coded. </br>
+					4. As I mainly done the loading and saving images part, I cited the functions that I learned from the example files in the png and jpeg library. The comments from the examples are mostly included too for others to read and understand. </br>
+				    </p>
+
+					<p class="ex3"> About Makefile </p class="ex3">
+					<p>
+					 &#9;As my job is dealing with the loading and saving images, the first task I have is changing the Makefile.  We want it includes the jpeg and png libraries and can make them when we fist run it. I also included the clean part to make them neat. </br>
+
+					We have to more attention about the order to compile all the files, as we want to finish compile all the GLUI_LIB, PNG_LIB, JPEG_LIB before we compile the object files. 
+					Other setups were easy by following the instructions. </br>
+
+					</p>
+
+					<p class="ex3">What I have done?</p class="ex3">
+					<p>
+					I personally done the loading/saving images, as well as the stamp tool.
+					I found that it is interesting that the png and jpeg have different ways to save pixel color. 
+					I first put all the codes for loading and saving inside the FlashPhotoApp.cpp file. However, as I finished more functions, I realized that this is a horrible idea. The reason is the FlashPhotoApp.cpp include many functions at very beginning and was long even without anything. The read and write for two types images need hundreds lines of codes. If I put them inside this file, it will make the whole thing longer. What make it worse, when to do loadImageToStamp function, we have to write the codes all over again. I want to take advantage of the read function. Therefore, I create two seperate class to handle jpeg and png files. Inside the FlashPhotoApp.cpp, we only need to call those function instead of writing it again. I like to give feedbacks for all possible situations, therefore I print different statements for possible errors. Following are my code: 
+					</p>
+
+<xmp>	
+void FlashPhotoApp::loadImageToCanvas()
+{
+    cout << "Load Canvas has been clicked for file " << m_fileName << endl;
+	if (isValidImageFileName(m_fileName)){
+      if(isValidImageFile(m_fileName)){
+        // if it is the jpeg file
+        if (hasSuffix(m_fileName,"jpg")||hasSuffix(m_fileName,"jpeg")){
+          JpegHandler graph = JpegHandler();
+          m_displayBuffer = graph.read_JPEG_file(&m_fileName[0u], m_displayBuffer);
+          setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+        }
+        // if it is the png file
+        else if (hasSuffix(m_fileName,"png")){
+          PngHandler graph = PngHandler();
+          m_displayBuffer = graph.read_PNG_file(&m_fileName[0u], m_displayBuffer);
+          setWindowDimensions(m_displayBuffer->getWidth(),m_displayBuffer->getHeight());
+        }
+        // more files in future
+        else{
+          cout << "More image types will be supported in future:) " << endl;
+        }
+      }
+      else{printf("Invalid image file." );}
+    }
+    else{printf("Invalid image file name." );}
+}
+</xmp>
+					<p class="ex3">JpegHandler</p class="ex3">
+					<p>
+					 &#9;The JpegHandler read and write is not that hard after reading the library handout and example, the most difficulty part for reading is to get pixel information by using the ColorDate structure we have. For the jpeg files, it stores color by three basic color, red, green and blue. Therefore, I use two for loops to get all the information of each pixel. To write, you can do it in reverse order. Following are the code:
+					</p> 
+<xmp>
+  for (int i=0; i < cinfo.image_height; i++){
+        for (int j=0; j < cinfo.image_width; j++){
+            float R =(float)raw_image[(i*cinfo.image_width*3)+(j*3)+0]/255.0; // Red Pixel
+            float G =(float)raw_image[(i*cinfo.image_width*3)+(j*3)+1]/255.0; // Green Pixel
+            float B = (float)raw_image[(i*cinfo.image_width*3)+(j*3)+2]/255.0; // Blue Pixel
+            int row_offset = 0;
+            //apply the each pixel to the new buffer
+            m_new_displayBuffer->setPixel(j,cinfo.image_height - i -1 , ColorData(R,G,B)); 
+        }
+    }
+</xmp>
+					
+					<p class="ex3">PngHandler</p class="ex3">
+					<p>
+					 &#9;The PngHandler is similar with JpegHandler. You can do most part after reading example and JpegHandler, the only trick thing is that png files can be with or without alpha value. Therefore, we have to take care of this. 
+					The giving function png_set_palette_to_rgb(png), png_set_expand_gray_1_2_4_to_8(png) and png_set_tRNS_to_alpha(png) can convert the format of the images.
+					I use the similar strategy as highlighter last time. Following are the code present:
+
+					</p> 
+<xmp>
+	PixelBuffer* m_new_displayBuffer = new PixelBuffer( width, height, ColorData(1,1,0.95));
+	 for (int y=0; y < height; y++){ 
+	     for (int x=0; x < width; x++){ //loop through every pixel in the canvas
+	       float R =(float)row_pointers[y][(x*4)+0]/255.0;   //get red color value
+	       float G =(float)row_pointers[y][(x*4)+1]/255.0;   //get green color value
+	       float B = (float)row_pointers[y][(x*4)+2]/255.0;  //get blue color value
+	       float A = (float)row_pointers[y][(x*4)+3]/255.0;  //get alpha color value
+	       //apply the color by multiple the alpha value
+	       m_new_displayBuffer->setPixel(x, height - y -1 , buffer->getPixel(x, height - y -1)*(1-A) + ColorData(R,G,B,A));    
+	     }
+	 }
+</xmp>
+				<p class="ex3">Stamp</p class="ex3">
+				<p>
+					 &#9;I decide to save the load image as the stamp in the variable m_buffer. And I will pass this variable into the the apply function as well as the m_displayBuffer. Therefore, when we use function, it will get each pixel of the loaded image and it will set the pixel afterwards. I used to for loops to look through the image file. And apply to the same size of the stamp to the canvas. The most important thing is remember to check if the pixel is outside the canvas or not. I use the if statement to determine if it is inside the canvas. If not, I will get and set the color information only inside the canvas. Following is my code: 
+				</p> 
+<xmp>
+void TStamp::applyToBufferStamp(int x, int y, ColorData toolColor, PixelBuffer* canvas, PixelBuffer* stamp)
+{
+  ColorData pixelinfo;
+  //Get the center
+  int CenterX = stamp->getWidth()/2 ;
+  int CenterY = stamp->getHeight()/2 ;
+  //loop through every pixel of the image
+  for (int j=0; j < stamp->getHeight(); j++){
+      for (int i=0; i < stamp->getWidth(); i++){
+      // Determine if it is still inside the canvas
+      if ((x + i - CenterX < canvas->getWidth()) && (y + j - CenterY < canvas->getHeight())){
+        pixelinfo = stamp->getPixel(i,j);
+        canvas->setPixel(x + i - CenterX, y + j - CenterY ,pixelinfo);
+      }
+    }
+  }
+}
+</xmp>
+				<p class="ex3">My feeling after Iteration 2</p class="ex3">
+				<p>
+					 &#9; The iteration 2 is significantly more difficult for me compared with last time. The loading and saving are difficult because we are using the unfamiliar libraries and we don't know what possible functions inside the library might be helpful for us. Therefore, it took me some time to figure that out. However, the overall output is amazing.
+				</p>
+		</div>
+		<a href="../programblog.html" class = "page"> Go back to Program Blog Page</a>
+	</body>
+</html>

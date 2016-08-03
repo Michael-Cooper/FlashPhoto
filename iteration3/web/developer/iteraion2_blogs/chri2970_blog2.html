@@ -1,0 +1,39 @@
+<html>
+<a href="../programblog.html" class = "page"> Go back </a>
+<p>During this iteration, I wrote five filters: FSaturation, FThreshold, FChannels, FQuantize, and FVignette. The code below is the primary function in the FVignette filter, which served as our "special filter."</p>
+
+<p>applyToBuffer is an overridden function inherited from the Filter super class. It modifies the color data of the pixels within buffer. It takes in two parameters, a pointer to a PixelBuffer, which is the canvas, and an array of floats. In this case, since the Vignette filter doesn't take in any parameters through the UI, it does nothing with the newStrength parameter.</p>
+
+<p>Since this function references some calculated values many times as it loops through all the pixels, these values (height, width, centerX, and centerY) are calculated and stored in variables before the start of the loop.</p>
+
+<p>Next, the function loops through each pixel in the buffer from right to left, top to bottom. At each pixel, the r, g, and b color data values are stored as variables for reference so that these calculations don't have to be repeated each time they are referenced. The algorithm for this particular filter uses the equation of an ellipse to determine whether to darken the pixel or not. The ellipse has the height and width of the buffer, so only the corners of the canvas are darkened. If the value res is less than or equal to 1, the pixel lies on the inside of the ellipse, and no changes are made. If res is greater than 1, it is darked by subtracting a value fac from each of the rgb values. fac is calculated by subtracting 1 from res and multiplying by .9. Since res increases as the pixel gets further from the ellipse boundary, a darkening gradient effect is created around the corners.</p>
+
+<code><pre>void FVignette::applyToBuffer(PixelBuffer* buffer, float newStrength[]) {<br>
+<br>
+  int height = buffer->getHeight();<br>
+  int width = buffer->getWidth();<br>
+  int centerX = width / 2;<br>
+  int centerY = height / 2;<br>
+
+  for (int x = 0; x < width; x++) {<br>
+    for (int y = 0; y < height; y++) {<br>
+
+      ColorData c = buffer->getPixel(x, y);<br>
+      float r = c.getRed();<br>
+      float g = c.getGreen();<br>
+      float b = c.getBlue();<br>
+
+      float res = pow((x-centerX),2) / pow((width/2),2) + pow((y-centerY),2) / pow((height/2),2);<br>
+      if (res > 1) {<br>
+        float fac = (res - 1) * .9;<br>
+        c.setRed(r - fac);<br>
+        c.setGreen(g - fac);<br>
+        c.setBlue(b - fac);<br>
+      }<br>
+
+      buffer->setPixel(x, y, c);<br>
+    }<br>
+  }<br>
+}</pre></code>
+<a href="../programblog.html" class = "page"> Go back to Program Blog Page</a>
+</html>

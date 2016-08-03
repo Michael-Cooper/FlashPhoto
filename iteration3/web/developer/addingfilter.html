@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+	<meta charset = "utf-8">
+	<title> Adding a New Filter </title>
+	<link class = "page" rel="stylesheet" type="text/css" href="stylesheet.css">
+
+</head>
+<body>
+
+
+	<div class="content">
+		<nav>
+			<a href="../index.html" class = "page"> Home </a> |
+			<a href="../usersupport.html" class = "page"> User Support </a> |
+			<a href="../developersupport.html" class = "page"> Developer Support</a>
+		</nav>
+	</div>
+
+	<div class = "content">
+	<h1>Adding a New Filter</h1>
+  	<p>
+	To add a new filter, we need to create .cpp and .h files for them first and then include them in FilterFactory files.
+	</p>
+
+	<h1><small><small>Convolution-based filters</small></small></h1>
+  	<p>
+	To add a convolution-based filter, it should inherit from the FilterConvolve class. By using the concept of convolving a small kernel with the pixels in image, many cool filters can be created quiet easy.  Set up the m_convolveAlpha and m_kernel correctly when you create a new convolution-based filter. Like what we did for KBlur, KSharpen, KEdge and KMotionBlurcreate, you want to create a kernel for the new filter. You can refer to FBlur, FSharpen, FEdge and FMotionBlur for more details.
+	</p>
+
+
+	<h1><small><small>Plain filters</small></small></h1>
+  	<p>
+	To add a plain filter, it should inherit from the Filter class directly. According to the property of the new filter, you may want to override the generatePixel function in the filter class or add some helper class like what we did for saturation. Afterwards, as is defined in the filter class, it will generate the output buffer by running two for loops to replace each pixel.
+	</p>
+	</div>
+
+	<div class = "footer">
+		<!-- You can change the copyright! -->
+		<span class="copyright">&copy; 2016, CSCI 3081 Cheng Chen/ Kaitiyn Christensen/ Michael Cooper/ Simin Sun</span>
+	</div>
+
+
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf8">
+        <style>
+        	h1 {color:purple; text-align: center;}
+        	p {color: red; text-align: center;}
+			div.code_snippet {color:blue;}
+			div.comment {color:black;}	
+		</style>
+		<title>chen4162_Blog_Entries</title>
+	</head>	
+	<body>
+		<h1>The Blog Entries of chen4162 for BrushWork Iteration 2</h1>
+		<h3>Date: April 11, 2016<br><br></h3>
+	<a href="../programblog.html" class = "page"> Go back</a> 
+
+		<div class = "code_snippet">
+			<pre>
+<p>Code Snippet 1</p>
+
+class PixelBuffer;
+
+class PixelBufferVector {
+	public:
+		PixelBufferVector();
+		virtual ~PixelBufferVector();
+		
+		vector<PixelBuffer *> getObject();
+		PixelBuffer * getDataWithIndex(int index);
+		void addData(PixelBuffer * buffer);
+		void deleteData();
+		void clearData();
+		int getSize();
+	private:
+		PixelBuffer * data;
+		vector<PixelBuffer *> myVector;
+};
+			</pre>
+		</div>
+		<div class = "comment">
+			<pre>
+(1) This snippet is from the PixelBufferVector class in the PixelBufferVector.h file, which is a helper class that stores my data structure.
+(2) The purpose for me to write the snippet is to create the header file with declarations for the PixelBufferVector class, and then we can use the class to apply a data structure to the store the PixelBuffers.
+In this class, I use the vector to be the data structure that stores the PixelBuffers. 
+Then I just created the constructor, destructor, getObject, getDataWithIndex, addData, deleteData, clearData and getSize functions.
+Also I created two private variables named data and myVector with PixelBuffer* and vector<PixelBuffer *> types respectively.
+I used a class style for this snippet.
+			</pre>
+		</div>
+
+		<div class = "code_snippet">
+			<pre>
+<p>Code Snippet 2</p>
+
+// Constructor of the PixelBufferVector class.
+PixelBufferVector::PixelBufferVector() {}
+
+// Destructor of the PixelBufferVector class.
+PixelBufferVector::~PixelBufferVector() {
+	myVector.clear();
+}
+
+// Get the PixelBufferVector object.
+vector<PixelBuffer *> PixelBufferVector::getObject() {
+	return myVector;
+}
+
+// Get the element in the vector by using index.
+PixelBuffer * PixelBufferVector::getDataWithIndex(int index) {
+	return myVector.at(index);
+}
+
+// Add a new element into the vector.
+void PixelBufferVector::addData(PixelBuffer * buffer) {
+	myVector.push_back (buffer);
+}
+
+// Delete the most recent element in the vector.
+void PixelBufferVector::deleteData() {
+	myVector.pop_back();
+}
+
+// Clear all of the elements in the vector.
+void PixelBufferVector::clearData() {
+	myVector.clear();
+}
+
+// Get the size of the vector.
+int PixelBufferVector::getSize() {
+	return myVector.size();
+}
+			</pre>
+		</div>
+		<div class = "comment">
+			<pre>
+(1) This snippet is from the PixelBufferVector class in the PixelBufferVector.cpp file, which is a helper class that stores my data structure.
+(2) The purpose for me to write the snippet is to create the cpp file with definitions for the PixelBufferVector class, and then we can use the class to apply a data structure to the store the PixelBuffers.
+In this class, I use the vector to be the data structure that stores the PixelBuffers. Then I just created the constructor, destructor. 
+And I use the getDataWithIndex function to get the corresponding data according to its index by using the vector's "at" function.
+I use the addData function to add the data one by one from the head to the tail by using the vector's "push_back" function.
+By using vector's "pop_back()" function, I created the deleteData function to delete the data one by one based on a "LIFO" principle.
+I also use the vector's "clear" function to create the clearData function to delete all of the data that stored in the vector.
+And I use vector's "size" function to create the getSize function to get the size of the vector.
+I used a class style for this snippet.
+			</pre>
+		</div>
+
+		<div class = "code_snippet">
+			<pre>
+<p>Code Snippet 3</p>
+
+// Create the object of the current pixelbuffer's vector.
+bufferVector = new PixelBufferVector();
+tempVector = new PixelBufferVector();
+
+// Initialize the undo times to be 0.
+undoTimes = 0;
+
+// Initialize the size to be the size of the pixelbuffer's vector.
+size = bufferVector->getSize();
+
+// Store the initial pixelbuffer into the empty pixelbuffer's vector.
+bufferVector->addData(start);
+			</pre>
+		</div>
+		<div class = "comment">
+			<pre>
+(1)	This snippet is from the FlashPhotoApp class in the FlashPhotoApp.cpp file. I added these codes in the constructor's definition.
+(2) The purpose for writing the snippet is to initialize the bufferVector, tempVector objects, initialize the undoTimes and size variables, and add a start PixelBuffer pointer into the bufferVector as the first element.
+For the initialization of the two vectors, I allocated the dynamic memories to them by using "new".
+For this snippet, I used the constructor style.
+			</pre>
+		</div>
+
+		<div class = "code_snippet">
+			<pre>
+<p>Code Snippet 4</p>
+
+if (copy) {
+	delete copy;
+}
+
+if (temp) {
+	delete temp;
+}
+
+if (start) {
+	delete start;
+}
+
+			</pre>
+		</div>
+		<div class = "comment">
+			<pre>
+(1) This snippet is from the FlashPhotoApp class in the FlashPhotoApp.cpp file. I added these codes in the destructor's definition. 
+(2) The purpose for me to write the snippet is to delete the dynamically allocating memories for all of the new objects defined in the header file. 
+Here I used several if-clauses to delete the dynamically allocating memories. For this snippet, I used the destructor style.
+			</pre>
+		</div>
+
+		<div class = "code_snippet">
+			<pre>
+<p>Code Snippet 5</p>
+
+// Add the new pixelbuffer into the vector of pixelbuffer's elements.
+copy = new PixelBuffer(m_displayBuffer->getWidth(), m_displayBuffer->getHeight(), m_displayBuffer->getBackgroundColor());
+PixelBuffer::copyPixelBuffer(m_displayBuffer, copy);
+bufferVector->addData(copy);
+undoEnabled(true);
+redoEnabled(false);
+tempVector->clearData();
+			</pre>
+		</div>
+		<div class = "comment">
+			<pre>
+(1) This snippet is from the FlashPhotoApp class in the FlashPhotoApp.cpp file. 
+I added the same code to 10 functions, including leftMouseUp, loadImageToCanvas, applyFilterThreshold, applyFilterChannel, applyFilterSaturate, applyFilterBlur,
+applyFilterSharpen, applyFilterMotionBlur, applyFilterEdgeDetect, applyFilterQuantize and applyFilterVignette functions. 
+(2) The purpose for me to write the code is to apply the undo/redo operations to the 9 filters and loading canvas correctly.
+The 1st line uses a dynamic memory to create a new independent PixelBuffer pointer to copy.
+I copy the m_displayBuffer to the copy in the second line.
+Then I add the copy to the bufferVector which stores all of the PixelBuffer pointers that we need to undo/redo in the third line.
+Next, I open the undo button and close the redo button to fulfill the requirement in the 4th line and 5th line.
+Lastly I delete all of the PixelBuffer pointers that stored in the tempVector to prevent us to redo and retrieve the PixelBuffer from the tempVector.
+			</pre>
+		</div>
+
+		<div class = "code_snippet">
+			<pre>
+<p>Code Snippet 6</p>
+
+void FlashPhotoApp::undoOperation()
+{
+	temp = new PixelBuffer(m_displayBuffer->getWidth(), m_displayBuffer->getHeight(), m_displayBuffer->getBackgroundColor());
+	PixelBuffer::copyPixelBuffer(m_displayBuffer, temp);
+	tempVector->addData(temp);
+	bufferVector->deleteData();
+	PixelBuffer::copyPixelBuffer(bufferVector->getDataWithIndex(bufferVector->getSize() - 1), m_displayBuffer);
+	undoTimes++;
+	if (undoTimes > 0)
+		redoEnabled(true);
+	size = bufferVector->getSize();
+	if (size <= 1)
+		undoEnabled(false);
+}
+			</pre>
+		</div>
+		<div class = "comment">
+			<pre>
+(1) This snippet is from the FlashPhotoApp class in the FlashPhotoApp.cpp file.
+(2) The purpose for me to write the code is to complete the undo operation by creating a function.
+For the lines 1~3, I create a new independent memory to temp that has the same dimention with current m_displayBuffer.
+And then I copy the data that m_displayBuffer points to to temp's pointed data.
+Next I add the temp to tempVector and we will use the tempVector to do the redo operation in the future.
+For the lines 4~5, I delete the current m_displayBuffer from the bufferVector and copy the last m_displayBuffer's data to current m_displayBuffer's data to do the undo operation.
+In the lines 6~11, I control the avaliblity of undo/redo by testing the values of the undoTimes and size of the bufferVector.
+			</pre>
+		</div>
+
+		<div class = "code_snippet">
+			<pre>
+<p>Code Snippet 7</p>
+
+void FlashPhotoApp::redoOperation()
+{
+	PixelBuffer::copyPixelBuffer(tempVector->getDataWithIndex(tempVector->getSize() - 1), m_displayBuffer);
+	tempVector->deleteData();
+	copy = new PixelBuffer(m_displayBuffer->getWidth(), m_displayBuffer->getHeight(), m_displayBuffer->getBackgroundColor());
+	PixelBuffer::copyPixelBuffer(m_displayBuffer, copy);
+	bufferVector->addData(copy);
+	undoTimes--;
+	if (undoTimes <= 0)
+		redoEnabled(false);
+	size = bufferVector->getSize();
+	if (size > 1)
+		undoEnabled(true);
+	if (tempVector->getSize() <= 0)
+		redoEnabled(false);
+}
+			</pre>
+		</div>
+		<div class = "comment">
+			<pre>
+(1) This snippet is from the FlashPhotoApp class in the FlashPhotoApp.cpp file.
+(2) The purpose for me to write the code is to complete the redo operation by creating a function.
+For the lines 1~2, I copy the data of the most recent element in the tempVector to the data of current m_displayBuffer, and then I delete that data in the tempVector.
+For the lines 3~5, I create a new independent memory to copy that has the same dimention with current m_displayBuffer.
+And then I copy the current m_displayBuffer's pointed data to copy's pointed data.
+Next I add the temp to tempVector and we will use the tempVector to do the redo operation in the future.
+Lastly I add the copy to bufferVector to do the redo operation.
+In the lines 6~13, I control the avaliblity of undo/redo by testing the values of the undoTimes and sizesof the bufferVector and tempVector.
+			</pre>
+		</div>
+			<a href="../programblog.html" class = "page"> Go back to Program Blog Page</a> 
+
+	</body>
+</html>
